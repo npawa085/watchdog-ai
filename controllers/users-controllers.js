@@ -56,6 +56,8 @@ const nextId = () => {
   var szOfDBIncrement = count(users) + 1;
 return szOfDBIncrement;
 }
+
+
 const getUsers = (req, res, next) => {
   res.json({ users: TEST_DB });
 };
@@ -65,29 +67,41 @@ const add = (req, res, next) => {
   if (!errors.isEmpty()) {
     throw new HttpError('Invalid inputs passed, please check your data.', 422);
   }
-  const { id, name } = req.body;
+  const { name } = req.body;
 
-  // const { id } = req.body;
   let options = {
-    args: [id]
+    args: [nextId()]
   };
   PythonShell.run('01-face-dataset.py', options, function(err, result) {
     if (err) throw err;
-    console.log('results: %j', result);
-    res.status(201).json({user: createdUser});
+    console.log(result);
 
 });
 
-  const createdUser = {
-    id: nextId(),
-    name 
-  };
+const createdUser = {
+  id,
+  name 
+};
 
-  
+TEST_DB.push(createdUser);
 
-  TEST_DB.push(createdUser);
+PythonShell.run('02-face-training.py', null, function(err, result) {
+  if (err) throw err;
+  console.log(result);
 
-  res.status(201).json({user: createdUser});
+});
+
+let options2 = {
+  args: [getusers()]
+};
+
+PythonShell.run('01-face-dataset.py', options2, function(err, result) {
+  if (err) throw err;
+  console.log(result);
+
+});
+
+res.status(201).json({user: createdUser});
 };
 
 
