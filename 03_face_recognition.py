@@ -47,8 +47,8 @@ while True:
             # if confidence is above 30% (lower than 70%),
             if (confidence < 70):
                 #then send REST request to /detect for KNOWN face of names[id] and id
-                #url = "https://localhost:3003/detect"
-                url = "https://watchdog.free.beeceptor.com/detect"
+                url = "https://localhost:3003/detect"
+                #url = "https://watchdog.free.beeceptor.com/detect"
                 data = {'id':id, 'name':id_disp}
                 n = requests.post(url, data = data)
                 print(n.text)
@@ -60,8 +60,8 @@ while True:
             confidence_disp = "  {0}%".format(round(100 - confidence))
             if (confidence > 130):
                 #send REST request to /detect for UNKNOWN face id: null, name: null
-                #url = "https://localhost:3003/detect"
-                url = "https://watchdog.free.beeceptor.com/detect"
+                url = "https://localhost:3003/detect"
+                #url = "https://watchdog.free.beeceptor.com/detect"
                 data = {'id': id_disp, 'name': id_disp}
                 n = requests.post(url, data=data)
                 print(n.text)
