@@ -95,7 +95,7 @@ let options2 = {
   args: [getusers()]
 };
 
-PythonShell.run('01-face-dataset.py', options2, function(err, result) {
+PythonShell.run('03-face-recognize.py', options2, function(err, result) {
   if (err) throw err;
   console.log(result);
 
