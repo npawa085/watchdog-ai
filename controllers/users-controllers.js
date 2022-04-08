@@ -100,7 +100,7 @@ async function four() {
 }
 
 const add = (req, res, next) => {
-
+  console.log(req)
   const { username } = req.body;
   console.log(username);
 
@@ -127,9 +127,9 @@ const add = (req, res, next) => {
 
 
 const detect = ( req, res ) => {
-  setInterval(() => detecting=0, 200000);
+  // setInterval(() => detecting=0, 200000);
   let { id, userName } = req.body;
-  console.log(req)
+  // console.log(req)
   console.log(id)
   console.log(userName)
   if (id == "unknown" && userName == "unknown") {
