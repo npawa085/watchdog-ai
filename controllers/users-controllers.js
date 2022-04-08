@@ -1,65 +1,47 @@
-const { validationResult } = require('express-validator');
-const HttpError = require('../models/http-error');
-let {PythonShell} = require('python-shell');
-
+const { validationResult } = require("express-validator");
+const HttpError = require("../models/http-error");
+let { PythonShell } = require("python-shell");
 
 const currDB = [
   {
-    id: '1',
-    UserNames: 'A B'
-
+    id: "1",
+    username: "A B",
   },
   {
-    id: '2',
-    UserNames: 'C D'
-   
+    id: "2",
+    username: "C D",
   },
   {
-    id: '3',
-    UserNames: 'E F'
-  
+    id: "3",
+    username: "E F",
   },
   {
-    id: '4',
-    UserNames: 'G H'
-  
+    id: "4",
+    username: "G H",
   },
   {
-    id: '5',
-    UserNames: 'I J'
- 
+    id: "5",
+    username: "I J",
   },
   {
-    id: '6',
-    UserNames: 'K L'
- 
-  }
-
+    id: "6",
+    username: "K L",
+  },
 ];
 
-
-// function count(data) {
-  // for (var p in data) {
-  //   if (typeof data[p] == 'object') {
-  //     c++;
-  //     count(data[p]);
-  //   }
-  // }
-  // return c;
-// }
+var id;
+var username;
+var detecting;
 
 const nextId = () => {
   szOfDBIncrement = currDB.length + 1;
-  // var szOfDBIncrement = count(users) + 1;
-return szOfDBIncrement;
-}
-
+  return szOfDBIncrement;
+};
 
 const getUsers = (req, res, next) => {
-
   const newArr = [];
-  for (var i = 0; i < currDB.length; i++){
-    newArr[i] = currDB[i].UserNames;
+  for (var i = 0; i < currDB.length; i++) {
+    newArr[i] = currDB[i].username;
   }
 
   res.json(newArr);
@@ -68,46 +50,72 @@ const getUsers = (req, res, next) => {
 const add = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new HttpError('Invalid inputs passed, please check your data.', 422);
+    throw new HttpError("Invalid inputs passed, please check your data.", 422);
   }
-  const { UserNames } = req.body;
+  const { username } = req.body;
 
   let options = {
-    args: [nextId()]
+    args: [nextId()],
   };
-  PythonShell.run('01-face-dataset.py', options, function(err, result) {
+  PythonShell.run("01-face-dataset.py", options, function (err, result) {
     if (err) throw err;
     console.log(result);
+  });
 
-});
+  const createdUser = {
+    id: nextId(),
+    username,
+  };
 
-const createdUser = {
-  id: nextId(),
-  UserNames 
+  currDB.push(createdUser);
+
+  PythonShell.run("02-face-training.py", null, function (err, result) {
+    if (err) throw err;
+    console.log(result);
+  });
+
+  let options2 = {
+    args: [getUsers()],
+  };
+
+  PythonShell.run("03-face-recognize.py", options2, function (err, result) {
+    if (err) throw err;
+    console.log(result);
+  });
+
+  res.status(201).json({ user: createdUser });
 };
 
-currDB.push(createdUser);
+function resetDetecting() {
+  detecting = 0;
+}
+const detect = (req, res, next) => {
+  setInterval(resetDetecting(), 2000);
 
-PythonShell.run('02-face-training.py', null, function(err, result) {
-  if (err) throw err;
-  console.log(result);
-
-});
-
-let options2 = {
-  args: [getUsers()]
+  if (id && username == "unknown") {
+    res.json("Person Not Identified");
+    detecting = 1;
+    id = "unknown";
+    username = "unknown";
+  } else {
+    res.json("Person Identified");
+    detecting = 1;
+    for (var i = 0; i < currDB.length; i++) {
+      if (currDB[i].username == username) {
+        return username;
+      }
+    }
+  }
 };
 
-PythonShell.run('03-face-recognize.py', options2, function(err, result) {
-  if (err) throw err;
-  console.log(result);
-
-});
-
-res.status(201).json({user: createdUser});
+const status = (req, res, next) => {
+  if ((detecting = 1)) {
+    return username;
+  }
 };
-
-
 
 exports.getUsers = getUsers;
 exports.add = add;
+
+exports.detect = detect;
+exports.status = status;
