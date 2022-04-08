@@ -30,7 +30,7 @@ const currDB = [
 ];
 
 var id;
-var username;
+var userName;
 var detecting;
 
 const nextId = () => {
@@ -44,7 +44,8 @@ const getUsers = (req, res, next) => {
     newArr[i] = currDB[i].username;
   }
 
-  res.json(newArr);
+  res.send(newArr)
+  return newArr;
 };
 
 const add = (req, res, next) => {
@@ -55,35 +56,43 @@ const add = (req, res, next) => {
   const { username } = req.body;
 
   let options = {
-    args: [nextId()],
+    args: [nextId()]
   };
-  PythonShell.run("01-face-dataset.py", options, function (err, result) {
-    if (err) throw err;
-    console.log(result);
-  });
-
+  console.log("hi");
+  // setTimeout(
+    PythonShell.run("01_face_dataset.py", options, function (err, result) {
+      if (err) throw err;
+      console.log(result);
+    });
+    console.log("hello");
+  // ),
+  //   7000;
   const createdUser = {
     id: nextId(),
     username,
   };
 
   currDB.push(createdUser);
+  console.log(createdUser);
 
-  PythonShell.run("02-face-training.py", null, function (err, result) {
-    if (err) throw err;
-    console.log(result);
-  });
+  setTimeout(
+    PythonShell.run("02_face_training.py", null, function (err, result) {
+      if (err) throw err;
+      console.log(result);
+    })
+  ),
+    2000;
 
   let options2 = {
-    args: [getUsers()],
+    args: [getUsers()]
   };
 
-  PythonShell.run("03-face-recognize.py", options2, function (err, result) {
+  PythonShell.run("03_face_recognition.py", options2, function (err, result) {
     if (err) throw err;
     console.log(result);
   });
 
-  res.status(201).json({ user: createdUser });
+  res.json({ user: createdUser });
 };
 
 function resetDetecting() {
@@ -92,17 +101,17 @@ function resetDetecting() {
 const detect = (req, res, next) => {
   setInterval(resetDetecting(), 2000);
 
-  if (id && username == "unknown") {
-    res.json("Person Not Identified");
+  if (id && userName == "unknown") {
+    res.send("Person Not Identified");
     detecting = 1;
     id = "unknown";
-    username = "unknown";
+    userName = "unknown";
   } else {
-    res.json("Person Identified");
+    res.send("Person Identified");
     detecting = 1;
     for (var i = 0; i < currDB.length; i++) {
-      if (currDB[i].username == username) {
-        return username;
+      if (currDB[i].username == userName) {
+        return userName;
       }
     }
   }
@@ -110,7 +119,7 @@ const detect = (req, res, next) => {
 
 const status = (req, res, next) => {
   if ((detecting = 1)) {
-    return username;
+    return userName;
   }
 };
 
