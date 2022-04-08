@@ -100,7 +100,7 @@ async function four() {
 }
 
 const add = (req, res, next) => {
-  console.log(req)
+  //console.log(req)
   const { username } = req.body;
   console.log(username);
 
