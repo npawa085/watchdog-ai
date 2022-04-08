@@ -132,6 +132,7 @@ const detect = ( req, res ) => {
     detecting = 1;
     id = "unknown";
     userName = "unknown";
+    console.log("1" + id, userName);
   } else {
     res.send("Person Identified");
     detecting = 1;
@@ -139,8 +140,10 @@ const detect = ( req, res ) => {
       if (currDB[i].username == userName) {
         return userName;
       }
+      console.log("2" + id, userName);
     }
   }
+  console.log("3" + id, userName);
 };
 
 const status = (req, res, next) => {
