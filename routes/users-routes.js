@@ -7,7 +7,8 @@ const router = express.Router();
 
 router.get("/", usersController.getUsers);
 
-router.post("/add", [check("name").not().isEmpty()], usersController.add);
+router.post("/add", usersController.add);
+// router.post("/add", [check("username").not().isEmpty()], usersController.add);
 
 router.post("/detect", usersController.detect);
 

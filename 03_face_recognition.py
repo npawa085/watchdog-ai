@@ -62,7 +62,7 @@ while True:
                 #send REST request to /detect for UNKNOWN face id: null, name: null
                 url = "http://localhost:3003/detect"
                 #url = "https://watchdog.free.beeceptor.com/detect"
-                data = {'id': id_disp, 'name': id_disp}
+                data = {'id': id_disp, 'userName': id_disp}
                 n = requests.post(url, data=data)
                 print(n.text)
 

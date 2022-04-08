@@ -39,12 +39,13 @@ const nextId = () => {
 };
 
 const getUsers = (req, res, next) => {
+  //console.log(req.body);
   const newArr = [];
   for (var i = 0; i < currDB.length; i++) {
     newArr[i] = currDB[i].username;
   }
 
-  //res.send([newArr]);
+  // res.send([newArr]);
   return newArr;
 };
 
@@ -55,6 +56,7 @@ function sleep(ms) {
 }
 
 function one() {
+  console.log("f1");
   let options = {
     args: [nextId()],
   };
@@ -65,6 +67,7 @@ function one() {
   });
 }
 function two() {
+  console.log("f2");
   PythonShell.run("02_face_training.py", null, function (err, result) {
     if (err) throw err;
     console.log(result);
@@ -72,13 +75,19 @@ function two() {
   });
 }
 function three() {
+  console.log("f3");
   let options2 = {
     args: [getUsers()],
   };
-  PythonShell.run("03_face_recognition.py", options2, function (err, result) {
-    if (err) throw err;
-    console.log(result);
-  });
+  try {
+    PythonShell.run("03_face_recognition.py", options2, function (err, result) {
+      if (err) throw err;
+      console.log(result);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+  
 }
 async function four() {
   one();
@@ -89,29 +98,16 @@ async function four() {
 }
 
 const add = (req, res, next) => {
-  // const errors = validationResult(req);
-  // if (!errors.isEmpty()) {
-  //   console.log(req);
-  //   throw new HttpError("Invalid inputs passed, please check your data.", 422);
-  // }
 
   const { username } = req.body;
-  // let options = {
-  //   args: [nextId()]
-  // };
-  //console.log("hi");
+  console.log(username);
 
-  // PythonShell.run("01_face_dataset.py", options, function (err, result) {
-  //   if (err) throw err;
-  //   console.log(result);
-  //   console.log("hello");
-  // });
   const newArr = [];
   for (var i = 0; i < currDB.length; i++) {
     newArr[i] = currDB[i].username;
   }
-  console.log(newArr);
-  console.log(getUsers());
+  // console.log(newArr);
+  
   four();
 
   const createdUser = {
@@ -124,21 +120,6 @@ const add = (req, res, next) => {
   console.log(createdUser);
   console.log(currDB);
 
-  // PythonShell.run("02_face_training.py", null, function (err, result) {
-  //   if (err) throw err;
-  //   console.log(result);
-  //   console.log("hi");
-  // });
-
-  // let options2 = {
-  //   args: [getUsers()]
-  // };
-
-  // PythonShell.run("03_face_recognition.py", options2, function (err, result) {
-  //   if (err) throw err;
-  //   console.log(result);
-  // });
-
   res.json({ user: createdUser });
 };
 
@@ -148,7 +129,7 @@ function resetDetecting() {
 const detect = (req, res, next) => {
   setInterval(resetDetecting(), 2000);
 
-  if (id && userName == "unknown") {
+  if (id == "unknown" && userName == "unknown") {
     res.send("Person Not Identified");
     detecting = 1;
     id = "unknown";
