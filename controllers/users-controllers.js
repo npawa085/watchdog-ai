@@ -29,9 +29,9 @@ const currDB = [
   // },
 ];
 
-var id;
-var userName;
-var detecting;
+global.id_detect;
+global.userName_detect = "";
+global.detecting = 0;
 
 const nextId = () => {
   szOfDBIncrement = currDB.length + 1;
@@ -127,7 +127,7 @@ const add = (req, res, next) => {
 
 
 const detect = ( req, res ) => {
-  setInterval(() => detecting=0, 2000);
+  setInterval(() => detecting=0, 200000);
   let { id, userName } = req.body;
   console.log(req)
   console.log(id)
@@ -135,13 +135,14 @@ const detect = ( req, res ) => {
   if (id == "unknown" && userName == "unknown") {
     res.send("Person Not Identified");
     detecting = 1;
-    id = "unknown";
-    userName = "unknown";
+    id_detect = "unknown";
+    userName_detect = "unknown";
     console.log("1" + id, userName);
   } else {
     res.send("Person Identified");
     console.log("person identified: " + userName)
     detecting = 1;
+    userName_detect = userName;
     console.log("after detection, variable is now " + detecting)
     for (var i = 0; i < currDB.length; i++) {
       if (currDB[i].username == userName) {
@@ -155,10 +156,18 @@ const detect = ( req, res ) => {
 };
 
 const status = (req, res, next) => {
-  if ((detecting = 1)) {
-    console.log(userName);
-    res.json({ user: userName });
+  temp = detecting;
+  console.log(temp)
+  name = userName_detect;
+  console.log(name);
+  if ((temp == 1)) {
+    console.log(userName_detect);
+    res.json({ user: name });
     console.log("frontend is asking for stuff");
+  }
+  else{
+    console.log(detecting);
+    res.json(null);
   }
 };
 
