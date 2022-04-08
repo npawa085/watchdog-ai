@@ -38,7 +38,6 @@ const currDB = [
 ];
 
 
-
 // function count(data) {
   // for (var p in data) {
   //   if (typeof data[p] == 'object') {
@@ -57,14 +56,7 @@ return szOfDBIncrement;
 
 
 const getUsers = (req, res, next) => {
-  // for (var i in currDB){
-  //   var key = i;
-  //   var val = currDB[i];
-  //   for (var j in val) {
-  //     var sub_key = j;
-  //     var sub_= val[j]
-  //   }
-  // }
+
   const newArr = [];
   for (var i = 0; i < currDB.length; i++){
     newArr[i] = currDB[i].UserNames;
@@ -90,7 +82,7 @@ const add = (req, res, next) => {
 });
 
 const createdUser = {
-  id,
+  id: nextId(),
   UserNames 
 };
 
@@ -103,7 +95,7 @@ PythonShell.run('02-face-training.py', null, function(err, result) {
 });
 
 let options2 = {
-  args: [getusers()]
+  args: [getUsers()]
 };
 
 PythonShell.run('03-face-recognize.py', options2, function(err, result) {
@@ -114,6 +106,7 @@ PythonShell.run('03-face-recognize.py', options2, function(err, result) {
 
 res.status(201).json({user: createdUser});
 };
+
 
 
 exports.getUsers = getUsers;
