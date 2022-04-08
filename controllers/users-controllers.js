@@ -123,11 +123,9 @@ const add = (req, res, next) => {
   res.json({ user: createdUser });
 };
 
-function resetDetecting() {
-  detecting = 0;
-}
-const detect = (req, res, next) => {
-  setInterval(resetDetecting(), 2000);
+
+const detect = ( req, res ) => {
+  setInterval(() => detecting=0, 2000);
 
   if (id == "unknown" && userName == "unknown") {
     res.send("Person Not Identified");
