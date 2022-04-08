@@ -9,8 +9,8 @@ router.get("/", usersController.getUsers);
 
 router.post("/add", [check("name").not().isEmpty()], usersController.add);
 
-router.post("/detect", usersController.detect)
+router.post("/detect", usersController.detect);
 
-router.get("/status", usersCOntroller.status)
+router.get("/status", usersController.status);
     
 module.exports = router;
