@@ -1,38 +1,37 @@
-// const uuid = require('uuid');
 const { validationResult } = require('express-validator');
 const HttpError = require('../models/http-error');
 let {PythonShell} = require('python-shell');
 
 
-const TEST_DB = [
+const currDB = [
   {
     id: '1',
-    name: 'A B'
+    UserNames: 'A B'
 
   },
   {
     id: '2',
-    name: 'C D'
+    UserNames: 'C D'
    
   },
   {
     id: '3',
-    name: 'E F'
+    UserNames: 'E F'
   
   },
   {
     id: '4',
-    name: 'G H'
+    UserNames: 'G H'
   
   },
   {
     id: '5',
-    name: 'I J'
+    UserNames: 'I J'
  
   },
   {
     id: '6',
-    name: 'K L'
+    UserNames: 'K L'
  
   }
 
@@ -40,26 +39,38 @@ const TEST_DB = [
 
 
 
-
-function count(data) {
-  //var c = 0;
-  for (var p in data) {
-    if (typeof data[p] == 'object') {
-      c++;
-      count(data[p]);
-    }
-  }
-  return c;
-}
+// function count(data) {
+  // for (var p in data) {
+  //   if (typeof data[p] == 'object') {
+  //     c++;
+  //     count(data[p]);
+  //   }
+  // }
+  // return c;
+// }
 
 const nextId = () => {
-  var szOfDBIncrement = count(users) + 1;
+  szOfDBIncrement = currDB.length + 1;
+  // var szOfDBIncrement = count(users) + 1;
 return szOfDBIncrement;
 }
 
 
 const getUsers = (req, res, next) => {
-  res.json({ users: TEST_DB });
+  // for (var i in currDB){
+  //   var key = i;
+  //   var val = currDB[i];
+  //   for (var j in val) {
+  //     var sub_key = j;
+  //     var sub_= val[j]
+  //   }
+  // }
+  const newArr = [];
+  for (var i = 0; i < currDB.length; i++){
+    newArr[i] = currDB[i].UserNames;
+  }
+
+  res.json(newArr);
 };
 
 const add = (req, res, next) => {
@@ -67,7 +78,7 @@ const add = (req, res, next) => {
   if (!errors.isEmpty()) {
     throw new HttpError('Invalid inputs passed, please check your data.', 422);
   }
-  const { name } = req.body;
+  const { UserNames } = req.body;
 
   let options = {
     args: [nextId()]
@@ -80,10 +91,10 @@ const add = (req, res, next) => {
 
 const createdUser = {
   id,
-  name 
+  UserNames 
 };
 
-TEST_DB.push(createdUser);
+currDB.push(createdUser);
 
 PythonShell.run('02-face-training.py', null, function(err, result) {
   if (err) throw err;
