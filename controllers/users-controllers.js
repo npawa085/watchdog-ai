@@ -3,30 +3,30 @@
 let { PythonShell } = require("python-shell");
 
 const currDB = [
-  {
-    id: 1,
-    username: "A B",
-  },
-  {
-    id: 2,
-    username: "C D",
-  },
-  {
-    id: 3,
-    username: "E F",
-  },
-  {
-    id: 4,
-    username: "G H",
-  },
-  {
-    id: 5,
-    username: "I J",
-  },
-  {
-    id: 6,
-    username: "K L",
-  },
+  // {
+  //   id: 1,
+  //   username: "A B",
+  // },
+  // {
+  //   id: 2,
+  //   username: "C D",
+  // },
+  // {
+  //   id: 3,
+  //   username: "E F",
+  // },
+  // {
+  //   id: 4,
+  //   username: "G H",
+  // },
+  // {
+  //   id: 5,
+  //   username: "I J",
+  // },
+  // {
+  //   id: 6,
+  //   username: "K L",
+  // },
 ];
 
 var id;
@@ -79,6 +79,7 @@ function three() {
   let options2 = {
     args: [getUsers()],
   };
+  console.log(options2)
   try {
     PythonShell.run("03_face_recognition.py", options2, function (err, result) {
       if (err) throw err;
@@ -86,6 +87,7 @@ function three() {
     });
   } catch (error) {
     console.log(error);
+    console.log(result);
   }
   
 }
@@ -126,7 +128,10 @@ const add = (req, res, next) => {
 
 const detect = ( req, res ) => {
   setInterval(() => detecting=0, 2000);
-
+  let { id, userName } = req.body;
+  console.log(req)
+  console.log(id)
+  console.log(userName)
   if (id == "unknown" && userName == "unknown") {
     res.send("Person Not Identified");
     detecting = 1;
@@ -135,9 +140,12 @@ const detect = ( req, res ) => {
     console.log("1" + id, userName);
   } else {
     res.send("Person Identified");
+    console.log("person identified: " + userName)
     detecting = 1;
+    console.log("after detection, variable is now " + detecting)
     for (var i = 0; i < currDB.length; i++) {
       if (currDB[i].username == userName) {
+        console.log("after for"+ userName);
         return userName;
       }
       console.log("2" + id, userName);
@@ -148,7 +156,9 @@ const detect = ( req, res ) => {
 
 const status = (req, res, next) => {
   if ((detecting = 1)) {
-    return userName;
+    console.log(userName);
+    res.json({ user: userName });
+    console.log("frontend is asking for stuff");
   }
 };
 

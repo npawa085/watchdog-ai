@@ -16,6 +16,8 @@ id = 0
 temp= sys.argv[1].split(',')
 final = ["None"] + temp
 names = final
+print("content of args from backend is:")
+print(names)
 # Initialize and start realtime video capture
 cam = cv2.VideoCapture(0)
 cam.set(3, 640) # set video widht
@@ -41,7 +43,8 @@ while True:
         # If confidence is less them 100 ==> "0" : perfect match 
         if (confidence < 100):
             id_disp = names[id]
-            print(id_disp + " and " + " {0}%".format(round(confidence)))
+            print(names[id])
+            #print(id_disp + " and " + " {0}%".format(round(confidence)))
             confidence_disp = "  {0}%".format(round(100 - confidence))
             #print(id + " and " + confidence)
             # if confidence is above 30% (lower than 70%),
@@ -49,21 +52,24 @@ while True:
                 #then send REST request to /detect for KNOWN face of names[id] and id
                 url = "http://localhost:3003/detect"
                 #url = "https://watchdog.free.beeceptor.com/detect"
-                data = {'id':id, 'name':id_disp}
-                n = requests.post(url, data = data)
-                print(n.text)
+                data = {'id':id, 'username':id_disp}
+                print(data)
+                n = requests.post(url, json={"id": id,"userName": id_disp})
+                print(n.text + "sending this")
                 #response = json.loads(n.text)
                 #print(response)
         else:
             id_disp = "unknown"
-            print(id_disp + " and " + " {0}%".format(round(confidence)))
+            #print(id_disp + " and " + " {0}%".format(round(confidence)))
             confidence_disp = "  {0}%".format(round(100 - confidence))
             if (confidence > 130):
                 #send REST request to /detect for UNKNOWN face id: null, name: null
                 url = "http://localhost:3003/detect"
                 #url = "https://watchdog.free.beeceptor.com/detect"
+
                 data = {'id': id_disp, 'userName': id_disp}
-                n = requests.post(url, data=data)
+                print(data)
+                n = requests.post(url, json={"id": id_disp,"userName": id_disp})
                 print(n.text)
 
         cv2.putText(
